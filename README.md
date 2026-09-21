@@ -33,7 +33,7 @@ The dataset is [`diffusers/dog-example`](https://huggingface.co/datasets/diffuse
 
 ## Run it on Enverge
 
-1. Launch an **RTX Pro 6000** instance at [app.enverge.ai](https://app.enverge.ai). Check that its SSH hostname contains the host you want, e.g. `<token>.rtx6000-0003.ssh.enverge.dev`.
+1. Launch an **RTX Pro 6000** instance at [rtx-pro-6000.enverge.ai](https://rtx-pro-6000.enverge.ai). Check that its SSH hostname contains the host you want, e.g. `<token>.rtx6000-0003.ssh.enverge.dev`.
 2. Copy this repo to the instance, from the repo root on your machine:
    ```
    scp -r . user@<token>.rtx6000-0003.ssh.enverge.dev:~/qwen-image-2512-lora
