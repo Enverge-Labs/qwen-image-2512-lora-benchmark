@@ -1,0 +1,9 @@
+setup_minutes 9.1
+train_wall_hours 1.300
+steady_steps_per_hour 1192.4  # checkpoint 250 to 1500, includes sampling every 250 steps
+block_minutes_min_max 12.6 12.6  # per 250 steps; a narrow spread is what makes extrapolation safe
+startup_hours 0.004  # model load and first sample, paid once
+extrapolated_8000_step_hours 6.713
+gpu_power_avg_w 564
+gpu_memory_peak_mib 65938
+gpu_temp_max_c 87

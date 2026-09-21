@@ -1,0 +1,73 @@
+# ai-toolkit job: Qwen-Image-2512 LoRA, sized to match the r/StableDiffusion run (8,000 steps, batch 2, 8 samples every 250 steps).
+# Everything else is ai-toolkit's UI default for a new Qwen-Image-2512 job at commit ef8110c, except quantization (see model).
+# run.sh replaces STEPS_PLACEHOLDER and the work/ paths are relative to this directory.
+job: extension
+config:
+  name: bench
+  process:
+    - type: sd_trainer
+      training_folder: work/output
+      device: cuda:0
+      performance_log_every: 10
+      network:
+        type: lora
+        linear: 32
+        linear_alpha: 32
+      save:
+        dtype: bf16
+        save_every: 250
+        # Keep every checkpoint: their timestamps are the per-250-step timing record.
+        max_step_saves_to_keep: 1000
+      datasets:
+        - folder_path: work/dataset
+          caption_ext: txt
+          caption_dropout_rate: 0.05
+          cache_latents_to_disk: false
+          resolution: [512, 768, 1024]
+      train:
+        batch_size: 2
+        steps: STEPS_PLACEHOLDER
+        gradient_accumulation: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: flowmatch
+        timestep_type: weighted
+        optimizer: adamw8bit
+        optimizer_params:
+          weight_decay: 1e-4
+        lr: 1e-4
+        cache_text_embeddings: false
+        dtype: bf16
+      model:
+        name_or_path: Qwen/Qwen-Image-2512
+        arch: "qwen_image:2512"  # UI value; ai-toolkit strips the tag
+        # UI default is qfloat8 + low_vram. Off here: 96 GB holds the bf16 model, which is the point of the comparison.
+        # If it OOMs, set quantize/quantize_te: true, qtype/qtype_te: qfloat8, and record that in results.
+        quantize: false
+        quantize_te: false
+        low_vram: false
+        layer_offloading: false
+      sample:
+        sampler: flowmatch
+        sample_every: 250
+        sample_start_step: 0
+        width: 1024
+        height: 1024
+        prompts:
+          - "woman with red hair, playing chess at the park, bomb going off in the background"
+          - "a woman holding a coffee cup, in a beanie, sitting at a cafe"
+          - "a horse is a DJ at a night club, fish eye lens, smoke machine, lazer lights, holding a martini"
+          - "a man showing off his cool new t shirt at the beach, a shark is jumping out of the water in the background"
+          - "a bear building a log cabin in the snow covered mountains"
+          - "woman playing the guitar, on stage, singing a song, laser lights, punk rocker"
+          - "hipster man with a beard, building a chair, in a wood shop"
+          - "photo of a man, white background, medium shot, modeling clothing, studio lighting, white backdrop"
+        neg: ""
+        seed: 42
+        walk_seed: true
+        guidance_scale: 4
+        sample_steps: 30
+meta:
+  name: "[name]"
+  version: "1.0"
